@@ -9,7 +9,7 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 # create a logger
 logger = logging.getLogger(__name__)
 # set the log level to debug and above
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.WARN)
 
 # not going to log to file at the minute
 #handler = logging.FileHandler('logger.log')
