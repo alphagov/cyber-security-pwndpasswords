@@ -60,7 +60,7 @@ class pwndapi():
                     resp = r.content
                 except:
                     resp = "couldn't load remote page content"
-            elif content_type == "application/json":
+            elif "application/json" in content_type:
                 try:
                     resp = r.json()
                 except json.JSONDecodeError:
