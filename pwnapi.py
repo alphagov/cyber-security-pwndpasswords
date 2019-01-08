@@ -21,6 +21,14 @@ logging.getLogger().addHandler(logging.StreamHandler())
 
 baseURL = "https://haveibeenpwned.com/api/v2"
 
+fourHundredString = "400 - Bad request - the account does not comply with an acceptable format (i.e. it's an empty string)"
+fourOThreeString = "403 - Forbidden - no user agent has been specified in the request"
+fourOFourString = "404 - Not found - the account could not be found and has therefore not been pwned"
+fourTwentyNineString = "Rate limit exceeded, refer to acceptable use of the API: https://haveibeenpwned.com/API/v2#AcceptableUse"
+fiveHundredString = "A server error occurred on haveibeenpwned.com. Please try again later."
+emailFormatString = "The provided string is not an email address"
+
+
 HEADERS = {'user-agent': 'firebreak-testapp/haveibeenpwnd/ v0.1', 'api-version': 2}
 range_url = 'https://api.pwnedpasswords.com/range/{}'
 email_url = 'https://haveibeenpwned.com/api/v2/breachedaccount/{}'
