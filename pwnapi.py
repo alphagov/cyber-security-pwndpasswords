@@ -69,6 +69,7 @@ class pwndapi():
             resp = fiveHundredString
         logger.debug("response: %s",  resp[:50])
 
+        # return the response, whatever it is
         return resp
 
     def __none_url_parameters(self, key, value):
