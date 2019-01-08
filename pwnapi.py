@@ -18,16 +18,15 @@ logger.setLevel(logging.DEBUG)
 # add the handlers to the logger
 logging.getLogger().addHandler(logging.StreamHandler())
 
-# human readable error strings
-fourHundredString = "400 - Bad request - the account does not comply with an acceptable format (i.e. it's an empty string)"
-fourOThreeString = "403 - Forbidden - no user agent has been specified in the request"
-fourOFourString = "404 - Not found - the account could not be found and has therefore not been pwned"
-fourTwentyNineString = "Rate limit exceeded, refer to acceptable use of the API: https://haveibeenpwned.com/API/v2#AcceptableUse"
-fiveHundredString = "A server error occurred on haveibeenpwned.com. Please try again later."
-emailFormatString = "The provided string is not an email address"
-
 # instance of the pwndapi class that does all of the API work
 class pwndapi():
+    # human readable error strings
+    fourHundredString = "400 - Bad request - the account does not comply with an acceptable format (i.e. it's an empty string)"
+    fourOThreeString = "403 - Forbidden - no user agent has been specified in the request"
+    fourOFourString = "404 - Not found - the account could not be found and has therefore not been pwned"
+    fourTwentyNineString = "Rate limit exceeded, refer to acceptable use of the API: https://haveibeenpwned.com/API/v2#AcceptableUse"
+    fiveHundredString = "A server error occurred on haveibeenpwned.com. Please try again later."
+    emailFormatString = "The provided string is not an email address"
     '''
     Mandatory parameters:
     user-agent
@@ -164,13 +163,11 @@ class pwndapi():
                 pnum = item[36:]
         logger.debug("password has been owned this many times: %i", int(pnum))
 
-
-
 testapp = pwndapi("test-agent", unverified=True, truncate=True )
 
 ### examples to test the functionality
-#testapp.all_breaches(domain="adobe.com")
+#testapp.all_breaches(domain="ashleymadison.com")
 #testapp.one_account(email_address="george@hotmail.com")
 #testapp.get_pastes("george@hotmail.com")
 #testapp.get_passwords("21BD1")
-testapp.test_password("qwerty")
+testapp.test_password("999999")
