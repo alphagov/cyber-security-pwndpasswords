@@ -164,12 +164,3 @@ class pwndapi():
                 pnum = item[36:]
         logger.debug("password has been owned this many times: %i", int(pnum))
         return pnum
-
-#testapp = pwndapi("test-agent", unverified=True, truncate=True )
-
-### examples to test the functionality
-#testapp.all_breaches(domain="ashleymadison.com")
-#testapp.one_account(email_address="george@hotmail.com")
-#testapp.get_pastes("george@hotmail.com")
-#testapp.get_passwords("21BD1")
-#testapp.test_password("999999")
