@@ -156,6 +156,7 @@ class pwndapi():
         url = self.__build_url(self.__password_hash_url, [hash], append_filters=False)
         resp = self.get_resource(url)
 
+        # response: hash, count
         data = resp.splitlines()
         print(data)
         for item in data:
