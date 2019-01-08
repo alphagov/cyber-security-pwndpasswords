@@ -48,21 +48,28 @@ class pwndapi():
     def get_resource(self, urlToFetch ):
 
         r = requests.get(urlToFetch, headers=self.__header, verify=True)
-        logger.debug(r.headers)
         logger.debug("URL: %s, status:%i", urlToFetch, r.status_code)
 
-        if r.status_code == 400:
-            return fourHundredString
+        if r.status_code == 200:
+            logger.info("successful request... ")
+            if r.headers.get('content-type') == "text/plain":
+                try:
+                    resp = r.json()
+                except json.JSONDecodeError:
+                    resp = r.content
+        elif r.status_code == 400:
+            resp = fourHundredString
         elif r.status_code == 403:
-            return fourOThreeString
+            resp = fourOThreeString
         elif r.status_code == 404:
-            return fourOFourString
+            resp = fourOFourString
         elif r.status_code == 429:
-            return fourTwentyNineString
+            resp = fourTwentyNineString
         elif r.status_code >= 500:
-            return fiveHundredString
-        else:
-            return r.json()
+            resp = fiveHundredString
+        logger.debug("response: %s",  resp[:50])
+
+        return resp
 
     def __none_url_parameters(self, key, value):
         if value == None:
@@ -83,7 +90,6 @@ class pwndapi():
 
         for param in params:
             url = url + param
-            logger.debug("url is: %s", url)
 
         if append_filters:
             url = url + self.__truncate_setting + self.__unverified_setting
@@ -125,6 +131,7 @@ class pwndapi():
         hash  =self.__validate_password_hash(password_hash)
         url = self.__build_url(self.__password_hash_url, [hash], append_filters=False)
         resp = self.get_resource(url)
+
         print(resp)
 
 testapp = pwndapi("test-agent", unverified=True, truncate=True )
