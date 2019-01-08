@@ -119,7 +119,7 @@ class pwndapi():
         url = self.__build_url(self.__allbreaches_url, [domain])
         resp = self.get_resource(url)
         # right now we're just printing this to the screen....
-        print(resp)
+        return resp
 
     def one_account(self, email_address, domain=None):
         domain = self.__none_url_parameters("domain", domain)
@@ -127,19 +127,19 @@ class pwndapi():
 
         url = self.__build_url(self.__one_account_url, [email, domain])
         resp = self.get_resource(url)
-        print(resp)
+        return resp
 
     def get_pastes(self, email_address):
         email = self.__validate_emailaddress(email_address) + "?"
         url = self.__build_url(self.__pastes_account_url, [email])
         resp = self.get_resource(url)
-        print(resp)
+        return resp
 
     def get_passwords(self, password_hash):
         hash  =self.__validate_password_hash(password_hash)
         url = self.__build_url(self.__password_hash_url, [hash], append_filters=False)
         resp = self.get_resource(url)
-        print(resp)
+        return resp
 
     def test_password(self, password):
         '''
@@ -163,6 +163,7 @@ class pwndapi():
             if item[0:35] == hex_digest[5:]:
                 pnum = item[36:]
         logger.debug("password has been owned this many times: %i", int(pnum))
+        return pnum
 
 #testapp = pwndapi("test-agent", unverified=True, truncate=True )
 
