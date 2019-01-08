@@ -80,7 +80,14 @@ class pwndapi():
         # right now we're just printing this to the screen....
         print(resp)
 
+    def one_account(self, email_address):
+
+        url = baseURL + "/breachedaccount/"+email_address+"?truncateResponse=true"
+        resp = self.get_resource(url)
+        print(resp)
+
 
 testapp = pwndapi("testapp","test-agent")
 
-testapp.all_breaches(domain="adobe.com",unverified=False,truncate=True)
+#testapp.all_breaches(domain="adobe.com",unverified=False,truncate=False)
+testapp.one_account("msivorn@gmail.com")
