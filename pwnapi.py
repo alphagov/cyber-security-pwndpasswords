@@ -15,12 +15,8 @@ logger.setLevel(logging.DEBUG)
 #handler = logging.FileHandler('logger.log')
 #handler.setLevel(logging.DEBUG)
 
-
 # add the handlers to the logger
 logging.getLogger().addHandler(logging.StreamHandler())
-
-
-
 
 # human readable error strings
 fourHundredString = "400 - Bad request - the account does not comply with an acceptable format (i.e. it's an empty string)"
@@ -42,16 +38,17 @@ class pwndapi():
         self.__user_agent = agent
         self.__header = {'User-Agent': self.__user_agent}
         # starting point for all the API calls
-        self.__base_url = "https://haveibeenpwned.com/api/v2"
-        self.__allbreaches_url = "/breaches?"
-        self.__one_account_url = "/breachedaccount/"
-
+        self.__allbreaches_url = "https://haveibeenpwned.com/api/v2/breaches?"
+        self.__one_account_url = "https://haveibeenpwned.com/api/v2/breachedaccount/"
+        self.__pastes_account_url = "https://haveibeenpwned.com/api/v2/pasteaccount/"
+        self.__password_hash_url = "https://api.pwnedpasswords.com/range/"
 
         logger.debug("User-agent: %s", self.__user_agent)
 
     def get_resource(self, urlToFetch ):
 
         r = requests.get(urlToFetch, headers=self.__header, verify=True)
+        logger.debug(r.headers)
         logger.debug("URL: %s, status:%i", urlToFetch, r.status_code)
 
         if r.status_code == 400:
@@ -81,13 +78,16 @@ class pwndapi():
             resp = "&" + key + "=false"
         return resp
 
-    def __build_url(self,endpoint,params):
-        url = self.__base_url + endpoint
+    def __build_url(self, endpoint, params, append_filters=True):
+        url = endpoint
 
         for param in params:
             url = url + param
             logger.debug("url is: %s", url)
-        url = url + self.__truncate_setting + self.__unverified_setting
+
+        if append_filters:
+            url = url + self.__truncate_setting + self.__unverified_setting
+
         logger.debug("url is: %s", url)
 
         return url
@@ -95,6 +95,9 @@ class pwndapi():
     def __validate_emailaddress(self,email_address):
         # TODO: write the validation
         return email_address
+
+    def __validate_password_hash(self, hash):
+        return hash
 
     def all_breaches(self, domain=None):
         domain = self.__none_url_parameters("domain", domain)
@@ -112,8 +115,21 @@ class pwndapi():
         resp = self.get_resource(url)
         print(resp)
 
+    def get_pastes(self, email_address):
+        email = self.__validate_emailaddress(email_address) + "?"
+        url = self.__build_url(self.__pastes_account_url, [email])
+        resp = self.get_resource(url)
+        print(resp)
+
+    def get_passwords(self, password_hash):
+        hash  =self.__validate_password_hash(password_hash)
+        url = self.__build_url(self.__password_hash_url, [hash], append_filters=False)
+        resp = self.get_resource(url)
+        print(resp)
 
 testapp = pwndapi("test-agent", unverified=True, truncate=True )
 
-testapp.all_breaches(domain="adobe.com")
-testapp.one_account(email_address="george@hotmail.com")
+#testapp.all_breaches(domain="adobe.com")
+#testapp.one_account(email_address="george@hotmail.com")
+#testapp.get_pastes("george@hotmail.com")
+testapp.get_passwords("21BD1")
