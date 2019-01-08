@@ -34,18 +34,18 @@ emailFormatString = "The provided string is not an email address"
 class pwndapi():
     '''
     Mandatory parameters:
-    email account to search for
     user-agent
     '''
-    def __init__(self, account, agent):
-        self.account = account
-        self.user_agent = agent
-        self.header = {'User-Agent': self.user_agent}
-        logger.debug("Account: %s, User-agent: %s", self.account, self.user_agent)
+    def __init__(self, agent, unverified, truncate):
+        self.__truncate_setting = self.__true_or_false_url_parameters("truncateResponse", truncate)
+        self.__unverified_setting = self.__true_or_false_url_parameters("includeUnverified", unverified)
+        self.__user_agent = agent
+        self.__header = {'User-Agent': self.__user_agent}
+        logger.debug("User-agent: %s", self.__user_agent)
 
     def get_resource(self, urlToFetch ):
 
-        r = requests.get(urlToFetch, headers=self.header, verify=True)
+        r = requests.get(urlToFetch, headers=self.__header, verify=True)
         logger.debug("URL: %s, status:%i", urlToFetch, r.status_code)
 
         if r.status_code == 400:
@@ -61,33 +61,37 @@ class pwndapi():
         else:
             return r.json()
 
-    def all_breaches(self, domain=None, truncate=False, unverified=False):
-        if truncate == True:
-            truncate = '?truncateResponse=true'
+    def __none_url_parameters(self, key, value):
+        if value == None:
+            resp = ''
         else:
-            truncate = '?truncateResponse=false'
-        if domain == None:
-            domain = ''
-        else:
-            domain = '&domain=' + domain
-        if unverified == True:
-            unverified = '&includeUnverified=true'
-        else:
-            unverified = ''
+            resp = "&" + key + "=" + value
+        return resp
 
-        url = baseURL + "/breaches" + truncate + domain + unverified
+    def __true_or_false_url_parameters(self, key, value):
+        if value == True:
+            resp = "&"+ key+"=true"
+        else:
+            resp = "&" + key + "=false"
+        return resp
+
+    def all_breaches(self, domain=None):
+        domain = self.__none_url_parameters("domain", domain)
+
+        url = baseURL + "/breaches?" + domain
         resp = self.get_resource(url)
         # right now we're just printing this to the screen....
         print(resp)
 
-    def one_account(self, email_address):
+    def one_account(self, email_address, domain=None):
+        domain = self.__none_url_parameters("domain", domain)
 
-        url = baseURL + "/breachedaccount/"+email_address+"?truncateResponse=true"
+        url = baseURL + "/breachedaccount/"+email_address+"?" + self.__truncate_setting + domain + self.__unverified_setting
         resp = self.get_resource(url)
         print(resp)
 
 
-testapp = pwndapi("testapp","test-agent")
+testapp = pwndapi("test-agent", unverified=True, truncate=True )
 
-#testapp.all_breaches(domain="adobe.com",unverified=False,truncate=False)
-testapp.one_account("msivorn@gmail.com")
+testapp.all_breaches(domain="adobe.com")
+testapp.one_account(email_address="george@hotmail.com")
