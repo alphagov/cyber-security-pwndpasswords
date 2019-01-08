@@ -19,8 +19,8 @@ logger.setLevel(logging.DEBUG)
 # add the handlers to the logger
 logging.getLogger().addHandler(logging.StreamHandler())
 
-# starting point for all the API calls
-baseURL = "https://haveibeenpwned.com/api/v2"
+
+
 
 # human readable error strings
 fourHundredString = "400 - Bad request - the account does not comply with an acceptable format (i.e. it's an empty string)"
@@ -41,6 +41,12 @@ class pwndapi():
         self.__unverified_setting = self.__true_or_false_url_parameters("includeUnverified", unverified)
         self.__user_agent = agent
         self.__header = {'User-Agent': self.__user_agent}
+        # starting point for all the API calls
+        self.__base_url = "https://haveibeenpwned.com/api/v2"
+        self.__allbreaches_url = "/breaches?"
+        self.__one_account_url = "/breachedaccount/"
+
+
         logger.debug("User-agent: %s", self.__user_agent)
 
     def get_resource(self, urlToFetch ):
@@ -75,18 +81,34 @@ class pwndapi():
             resp = "&" + key + "=false"
         return resp
 
+    def __build_url(self,endpoint,params):
+        url = self.__base_url + endpoint
+
+        for param in params:
+            url = url + param
+            logger.debug("url is: %s", url)
+        url = url + self.__truncate_setting + self.__unverified_setting
+        logger.debug("url is: %s", url)
+
+        return url
+
+    def __validate_emailaddress(self,email_address):
+        # TODO: write the validation
+        return email_address
+
     def all_breaches(self, domain=None):
         domain = self.__none_url_parameters("domain", domain)
 
-        url = baseURL + "/breaches?" + domain
+        url = self.__build_url(self.__allbreaches_url, [domain])
         resp = self.get_resource(url)
         # right now we're just printing this to the screen....
         print(resp)
 
     def one_account(self, email_address, domain=None):
         domain = self.__none_url_parameters("domain", domain)
+        email = self.__validate_emailaddress(email_address)+"?"
 
-        url = baseURL + "/breachedaccount/"+email_address+"?" + self.__truncate_setting + domain + self.__unverified_setting
+        url = self.__build_url(self.__one_account_url, [email, domain])
         resp = self.get_resource(url)
         print(resp)
 
