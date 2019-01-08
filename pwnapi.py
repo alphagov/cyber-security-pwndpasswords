@@ -57,7 +57,7 @@ class pwndapi():
             content_type = r.headers.get('content-type')
             if content_type == "text/plain":
                 try:
-                    resp = r.content
+                    resp = r.content.decode() # r.content is a bytes object that needs to be decoded
                 except:
                     resp = "couldn't load remote page content"
             elif "application/json" in content_type:
