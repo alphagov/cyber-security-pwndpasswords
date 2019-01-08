@@ -57,7 +57,7 @@ class pwndapi():
             content_type = r.headers.get('content-type')
             if content_type == "text/plain":
                 try:
-                    resp = r.content
+                    resp = r.text
                 except:
                     resp = "couldn't load remote page content"
             elif "application/json" in content_type:
@@ -140,12 +140,37 @@ class pwndapi():
         hash  =self.__validate_password_hash(password_hash)
         url = self.__build_url(self.__password_hash_url, [hash], append_filters=False)
         resp = self.get_resource(url)
-
         print(resp)
+
+    def test_password(self, password):
+        '''
+        See how many times a given password is owned... note that pwntpasswords only
+        uses the first 5 characters, so it's not an exact match
+        '''
+        hash_object = hashlib.sha1(bytes(password, encoding='utf-8'))
+
+        hex_digest = hash_object.hexdigest()
+        hex_digest = hex_digest.upper()
+        hash = hex_digest[:5]
+
+        pnum = 0
+        url = self.__build_url(self.__password_hash_url, [hash], append_filters=False)
+        resp = self.get_resource(url)
+
+        data = resp.splitlines()
+        print(data)
+        for item in data:
+            if item[0:35] == hex_digest[5:]:
+                pnum = item[36:]
+        logger.debug("password has been owned this many times: %i", int(pnum))
+
+
 
 testapp = pwndapi("test-agent", unverified=True, truncate=True )
 
-testapp.all_breaches(domain="adobe.com")
-testapp.one_account(email_address="george@hotmail.com")
-testapp.get_pastes("george@hotmail.com")
-testapp.get_passwords("21BD1")
+### examples to test the functionality
+#testapp.all_breaches(domain="adobe.com")
+#testapp.one_account(email_address="george@hotmail.com")
+#testapp.get_pastes("george@hotmail.com")
+#testapp.get_passwords("21BD1")
+testapp.test_password("qwerty")
