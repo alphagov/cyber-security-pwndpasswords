@@ -49,14 +49,22 @@ class pwndapi():
 
         r = requests.get(urlToFetch, headers=self.__header, verify=True)
         logger.debug("URL: %s, status:%i", urlToFetch, r.status_code)
+        logger.debug(r.headers.get('content-type'))
 
+        resp = ""
         if r.status_code == 200:
             logger.info("successful request... ")
-            if r.headers.get('content-type') == "text/plain":
+            content_type = r.headers.get('content-type')
+            if content_type == "text/plain":
+                try:
+                    resp = r.content
+                except:
+                    resp = "couldn't load remote page content"
+            elif content_type == "application/json":
                 try:
                     resp = r.json()
                 except json.JSONDecodeError:
-                    resp = r.content
+                    resp = "couldn't load json"
         elif r.status_code == 400:
             resp = fourHundredString
         elif r.status_code == 403:
@@ -137,7 +145,7 @@ class pwndapi():
 
 testapp = pwndapi("test-agent", unverified=True, truncate=True )
 
-#testapp.all_breaches(domain="adobe.com")
-#testapp.one_account(email_address="george@hotmail.com")
-#testapp.get_pastes("george@hotmail.com")
+testapp.all_breaches(domain="adobe.com")
+testapp.one_account(email_address="george@hotmail.com")
+testapp.get_pastes("george@hotmail.com")
 testapp.get_passwords("21BD1")
