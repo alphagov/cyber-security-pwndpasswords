@@ -11,6 +11,12 @@ logger = logging.getLogger(__name__)
 # set the log level to debug and above
 logger.setLevel(logging.WARN)
 
+# not going to log to file at the minute
+#handler = logging.FileHandler('logger.log')
+#handler.setLevel(logging.DEBUG)
+
+# add the handlers to the logger
+logging.getLogger().addHandler(logging.StreamHandler())
 # human readable error strings
 fourHundredString = "400 - Bad request - the account does not comply with an acceptable format (i.e. it's an empty string)"
 fourOThreeString = "403 - Forbidden - no user agent has been specified in the request"
@@ -18,14 +24,6 @@ fourOFourString = "404 - Not found - the account could not be found and has ther
 fourTwentyNineString = "Rate limit exceeded, refer to acceptable use of the API: https://haveibeenpwned.com/API/v2#AcceptableUse"
 fiveHundredString = "A server error occurred on haveibeenpwned.com. Please try again later."
 emailFormatString = "The provided string is not an email address"
-
-# not going to log to file at the minute
-#handler = logging.FileHandler('logger.log')
-#handler.setLevel(logging.DEBUG)
-
-# add the handlers to the logger
-logging.getLogger().addHandler(logging.StreamHandler())
-
 # instance of the pwndapi class that does all of the API work
 class pwndapi():
 
@@ -38,7 +36,6 @@ class pwndapi():
         self.__unverified_setting = self.__true_or_false_url_parameters("includeUnverified", unverified)
         self.__user_agent = agent
         self.__header = {'User-Agent': self.__user_agent}
-        # starting point for all the API calls
         self.__allbreaches_url = "https://haveibeenpwned.com/api/v2/breaches?"
         self.__one_account_url = "https://haveibeenpwned.com/api/v2/breachedaccount/"
         self.__pastes_account_url = "https://haveibeenpwned.com/api/v2/pasteaccount/"
