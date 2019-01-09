@@ -7,6 +7,7 @@ import time
 mylogger = logging.getLogger("patrick")
 # set the log level to debug and above
 mylogger.setLevel(logging.DEBUG)
+mylogger.propagate = False
 
 # not going to log to file at the minute
 #handler = logging.FileHandler('logger.log')
