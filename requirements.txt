@@ -1,1 +1,4 @@
 requests
+wordcloud
+matplotlib
+pandas
