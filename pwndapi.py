@@ -28,17 +28,36 @@ logging.getLogger().addHandler(logging.StreamHandler())
 
 # instance of the pwndapi class that does all of the API work
 class pwndapi():
+    """
+    A class used to represent the pwndapi service
 
-    '''
-    Mandatory parameters:
-    user-agent
-    '''
+    ...
+
+    Attributes
+    ----------
+    user-agent : str
+        User-agent to make web requests
+
+    Methods
+    -------
+    all_breaches(domain=None)
+        Get a list of all breaches, provide an optional domain for filtering
+    one_account(email_address=Str, domain=None)
+        Get breaches for a given account and optional domain
+    get_pastes(email_address=Str)
+        Get pastes for a given account (email)
+    get_passwords(password_hash=Str)
+        Prints the animals name and what sound it makes
+    test_password(password=Str):
+        See how many times a given password has been owned based on first 5 characters
+
+    """
+
     def __init__(self, agent, unverified, truncate):
         self.__truncate_setting = self.__true_or_false_url_parameters("truncateResponse", truncate)
         self.__unverified_setting = self.__true_or_false_url_parameters("includeUnverified", unverified)
         self.__user_agent = agent
         self.__header = {'User-Agent': self.__user_agent}
-        # starting point for all the API calls
         self.__allbreaches_url = "https://haveibeenpwned.com/api/v2/breaches?"
         self.__one_account_url = "https://haveibeenpwned.com/api/v2/breachedaccount/"
         self.__pastes_account_url = "https://haveibeenpwned.com/api/v2/pasteaccount/"
@@ -47,7 +66,12 @@ class pwndapi():
         logger.debug("User-agent: %s", self.__user_agent)
 
     def get_resource(self, urlToFetch ):
-
+        """
+        handles text/plain and json at present.
+        TODO: validation and proper error handling
+        urlToFetch : str
+            remote URL to return
+        """
         r = requests.get(urlToFetch, headers=self.__header, verify=True)
         logger.debug("URL: %s, status:%i", urlToFetch, r.status_code)
         logger.debug(r.headers.get('content-type'))
@@ -116,6 +140,9 @@ class pwndapi():
         return hash
 
     def all_breaches(self, domain=None):
+        """
+        get all breaches. optional domain for filtering
+        """
         domain = self.__none_url_parameters("domain", domain)
 
         url = self.__build_url(self.__allbreaches_url, [domain])
